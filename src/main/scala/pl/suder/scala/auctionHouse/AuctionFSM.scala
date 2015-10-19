@@ -1,8 +1,8 @@
-package pl.suder.scala
+package pl.suder.scala.auctionHouse
 
 import akka.actor.{ ActorRef, FSM }
-import scala.concurrent.duration._
-
+import scala.concurrent.duration.`package`.DurationInt
+import pl.suder.scala.auctionHouse.Message._
 
 object AuctionFSM {
   sealed trait State
@@ -13,11 +13,13 @@ object AuctionFSM {
   
   sealed trait Data
   case class Auction(winner: ActorRef, prize: Int) extends Data
+  
+  val BidTimer = 10 seconds
+  val DeleteTimer = 5 seconds
 }
 
-class AuctionFSM extends FSM[AuctionFSM.State, AuctionFSM.Data] {
+class AuctionFSM extends FSM[AuctionFSM.State, AuctionFSM.Data] { 
   import AuctionFSM._
-  import pl.suder.scala.AuctionMessage._
   import context._
   
   startWith(Created, null)

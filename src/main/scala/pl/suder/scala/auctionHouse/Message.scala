@@ -9,9 +9,13 @@ object Message {
   case object Relist
   case object EndAuction
   case object DeleteAuction
-  
+
   case object ItemSold
   case object ItemBuyed
-  case object NotEnough
-  case object Beaten
+  case class NotEnough(bid: Int) {
+    require(bid > 0)
+  }
+  case class Beaten(bid: Int) {
+    require(bid > 0)
+  }
 }

@@ -15,14 +15,12 @@ class Buyer(val auctionsName: List[String], val maxPrize: Int) extends Actor {
     case SearchResult(auctions) =>
       auctions.filter { auction => !participatedAuctions.contains(auction) }.foreach { auction => bid(auction, 10) }
       context become buying(sold, (participatedAuctions ::: auctions).distinct)
-    case ItemSold | ItemBuyed if sold + 1 == participatedAuctions.size =>
-      println("end" + self); context stop self
-    case ItemSold | ItemBuyed =>
-      println("win or sold" + self); context become buying(sold + 1, participatedAuctions)
+    case ItemSold | ItemBuyed if sold + 1 == participatedAuctions.size => context stop self
+    case ItemSold | ItemBuyed => context become buying(sold + 1, participatedAuctions)
     case NotEnough(currentBid) if currentBid + 1 > maxPrize => if (sold + 1 == participatedAuctions.size) context stop self else context become buying(sold + 1, participatedAuctions)
-    case NotEnough(currentBid)                              => bid(sender, currentBid + 1)
-    case Beaten(currentBid) if currentBid + 1 > maxPrize    => if (sold + 1 == participatedAuctions.size) context stop self else context become buying(sold + 1, participatedAuctions)
-    case Beaten(currentBid)                                 => bid(sender, currentBid + 1)
+    case NotEnough(currentBid) => bid(sender, currentBid + 1)
+    case Beaten(currentBid) if currentBid + 1 > maxPrize => if (sold + 1 == participatedAuctions.size) context stop self else context become buying(sold + 1, participatedAuctions)
+    case Beaten(currentBid) => bid(sender, currentBid + 1)
   }
 
   override def receive = buying(0, List())

@@ -28,7 +28,6 @@ class Auction(val name: String) extends Actor {
       startEndTimer()
       context become Created
     case DeleteAuction =>
-      println(context.parent)
       context.parent ! AuctionDeleted
       context stop self
   }

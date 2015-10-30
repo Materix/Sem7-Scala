@@ -63,7 +63,6 @@ class AuctionTest extends TestKit(ActorSystem("AuctionHouseTest"))
         val buyer = TestProbe()
         val buyer2 = TestProbe()
         buyer.send(underTest, Bid(1))
-        println((Auction.BidTimer + (1 second)).length)
         Thread sleep (Auction.BidTimer + (1 second)).length * 1000
         buyer2.send(underTest, Bid(2))
         buyer2.expectMsg(1 second, ItemSold)

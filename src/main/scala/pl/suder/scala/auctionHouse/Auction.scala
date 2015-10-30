@@ -29,7 +29,7 @@ class Auction(val name: String) extends Actor {
       context become Created
     case DeleteAuction =>
       println(context.parent)
-      context.parent ! AuctionEnded(false)
+      context.parent ! AuctionDeleted
       context stop self
   }
 
@@ -47,7 +47,7 @@ class Auction(val name: String) extends Actor {
 
   def Sold: Receive = LoggingReceive {
     case Bid(_)        => sender ! ItemSold
-    case DeleteAuction => context stop self
+    case DeleteAuction => context.parent ! AuctionDeleted; context stop self
   }
 
   def startEndTimer() {

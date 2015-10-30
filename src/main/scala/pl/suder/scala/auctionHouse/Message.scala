@@ -10,6 +10,7 @@ object Message {
   case object Relist
   case object EndAuction
   case object DeleteAuction
+  case object AuctionDeleted
   case class AuctionEnded(sold: Boolean)
 
   case object ItemSold

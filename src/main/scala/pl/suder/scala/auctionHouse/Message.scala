@@ -1,5 +1,6 @@
 package pl.suder.scala.auctionHouse
 
+import akka.actor.ActorRef
 import scala.concurrent.duration.`package`.DurationInt
 
 object Message {
@@ -9,6 +10,7 @@ object Message {
   case object Relist
   case object EndAuction
   case object DeleteAuction
+  case class AuctionEnded(sold: Boolean)
 
   case object ItemSold
   case object ItemBuyed
@@ -18,4 +20,16 @@ object Message {
   case class Beaten(bid: Int) {
     require(bid > 0)
   }
+
+  case class Register(name: String) {
+    require(name != null)
+    require(name.trim.length > 0)
+  }
+
+  case class Search(name: String) {
+    require(name != null)
+    require(name.trim.length > 0)
+  }
+
+  case class SearchResult(auctions: List[ActorRef])
 }

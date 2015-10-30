@@ -11,7 +11,7 @@ object Auction {
   val DeleteTimer = 5 seconds
 }
 
-class Auction extends Actor {
+class Auction(val name: String) extends Actor {
   import context._
   import Auction._
 
@@ -28,6 +28,8 @@ class Auction extends Actor {
       startEndTimer()
       context become Created
     case DeleteAuction =>
+      println(context.parent)
+      context.parent ! AuctionEnded(false)
       context stop self
   }
 
@@ -38,7 +40,7 @@ class Auction extends Actor {
     case Bid(_) => sender ! NotEnough(prize)
     case EndAuction =>
       buyer ! ItemBuyed
-      // TODO notify Seller
+      context.parent ! AuctionEnded(true)
       startDeleteTimer()
       context become Sold
   }
@@ -56,6 +58,7 @@ class Auction extends Actor {
     system.scheduler.scheduleOnce(DeleteTimer, self, DeleteAuction)
   }
 
+  override def receive = Created
+  context.actorSelection("/user/AuctionSearch") ! Register(name)
   startEndTimer()
-  def receive = Created
 }

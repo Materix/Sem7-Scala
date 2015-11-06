@@ -25,7 +25,7 @@ class BuyerTest extends TestKit(ActorSystem("AuctionHouseTest"))
       auctionSearchTestProbe.expectMsg(1 second, Search(AUCTION_NAME))
     }
     "try to bid an auction" in {
-      auctionTestProbe.expectMsg(2 second, Bid(10))
+      auctionTestProbe.expectMsg(3 second, Bid(10))
     }
     "try to rebid an auction when was beaten" in {
       auctionTestProbe.expectMsg(3 second, Bid(10))
@@ -34,25 +34,22 @@ class BuyerTest extends TestKit(ActorSystem("AuctionHouseTest"))
     }
     "terminated" when {
       "buy item" in {
-        val testProbe = TestProbe()
-        testProbe watch underTest
+        watch(underTest)
         auctionTestProbe.expectMsg(3 second, Bid(10))
         auctionTestProbe.send(underTest, ItemBuyed)
-        testProbe.expectTerminated(underTest, 1 second)
+        expectTerminated(underTest, 1 second)
       }
       "auction was ended (and he does not buy item)" in {
-        val testProbe = TestProbe()
-        testProbe watch underTest
+        watch(underTest)
         auctionTestProbe.expectMsg(3 second, Bid(10))
         auctionTestProbe.send(underTest, ItemSold)
-        testProbe.expectTerminated(underTest, 1 second)
+        expectTerminated(underTest, 1 second)
       }
       "does not have enough money" in {
-        val testProbe = TestProbe()
-        testProbe watch underTest
+        watch(underTest)
         auctionTestProbe.expectMsg(3 second, Bid(10))
         auctionTestProbe.send(underTest, Beaten(20))
-        testProbe.expectTerminated(underTest, 1 second)
+        expectTerminated(underTest, 1 second)
       }
     }
   }

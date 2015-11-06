@@ -22,14 +22,12 @@ class AuctionTest extends TestKit(ActorSystem("AuctionHouseTest"))
 
   "An auction" should {
     "send ItemBuyed after AuctionEnded to winner" in {
-      val buyer = TestProbe()
-      buyer.send(underTest, Bid(1))
-      buyer.expectMsg(Auction.BidTimer + (1 second), ItemBuyed)
+      underTest ! Bid(1)
+      expectMsg(Auction.BidTimer + (1 second), ItemBuyed)
     }
     "tell parent that item is sold" when {
       "sb bid it" in {
-        val buyer = TestProbe()
-        buyer.send(underTest, Bid(1))
+        underTest ! Bid(1)
         parentTestProbe.expectMsg(Auction.BidTimer + (1 second), AuctionEnded(true))
       }
     }
@@ -38,40 +36,35 @@ class AuctionTest extends TestKit(ActorSystem("AuctionHouseTest"))
         parentTestProbe.expectMsg(Auction.BidTimer + (1 second) + Auction.DeleteTimer, AuctionDeleted)
       }
       "sb bid it" in {
-        val buyer = TestProbe()
-        buyer.send(underTest, Bid(1))
+        underTest ! Bid(1)
         parentTestProbe.expectMsg(Auction.BidTimer + (1 second), AuctionEnded(true))
         parentTestProbe.expectMsg(Auction.BidTimer + (1 second) + Auction.DeleteTimer, AuctionDeleted)
       }
     }
     "tell winner that is beaten" in {
-      val buyer = TestProbe()
       val buyer2 = TestProbe()
-      buyer.send(underTest, Bid(1))
+      underTest ! Bid(1)
       buyer2.send(underTest, Bid(2))
-      buyer.expectMsg(1 second, Beaten(2))
+      expectMsg(1 second, Beaten(2))
     }
     "tell buyer that give too small bid" in {
-      val buyer = TestProbe()
       val buyer2 = TestProbe()
-      buyer.send(underTest, Bid(2))
+      underTest ! Bid(2)
       buyer2.send(underTest, Bid(1))
       buyer2.expectMsg(1 second, NotEnough(2))
     }
     "tell buyer that item is sold" when {
       "he send bid after auction is end" in {
-        val buyer = TestProbe()
         val buyer2 = TestProbe()
-        buyer.send(underTest, Bid(1))
+        underTest ! Bid(1)
         Thread sleep (Auction.BidTimer + (1 second)).length * 1000
         buyer2.send(underTest, Bid(2))
         buyer2.expectMsg(1 second, ItemSold)
       }
     }
     "be terminated after auction end" in {
-      val probe = TestProbe()
-      probe watch underTest
-      probe.expectTerminated(underTest, Auction.BidTimer + (1 second) + Auction.DeleteTimer)
+      watch(underTest)
+      expectTerminated(underTest, Auction.BidTimer + (1 second) + Auction.DeleteTimer)
     }
     "register in auction search" in {
       auctionSearchTestProbe.expectMsg(1 second, Register(NAME))

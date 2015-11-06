@@ -19,9 +19,8 @@ class SellerTest extends TestKit(ActorSystem("AuctionHouseTest"))
       underTest.children.size equals AUCTION_NAMES.length
     }
     "end when all children ends" in {
-      val probe = TestProbe()
-      probe watch underTest
-      probe.expectTerminated(underTest, Auction.BidTimer + Auction.DeleteTimer + (1 second))
+      watch(underTest)
+      expectTerminated(underTest, Auction.BidTimer + Auction.DeleteTimer + (1 second))
     }
   }
 }

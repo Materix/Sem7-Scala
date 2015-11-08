@@ -15,7 +15,7 @@ class BuyerTest extends TestKit(ActorSystem("AuctionHouseTest"))
   val auctionTestProbe = TestProbe()
   system.actorOf(Props(new Actor() {
     override def receive = {
-      case x => sender ! SearchResult(List(auctionTestProbe.ref)); auctionSearchTestProbe.ref forward x
+      case x => sender ! SearchResult(List(auctionTestProbe.ref.path)); auctionSearchTestProbe.ref forward x
     }
   }), "AuctionSearch")
   val underTest = TestActorRef(Props(classOf[Buyer], List(AUCTION_NAME), 15), "buyer")

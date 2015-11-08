@@ -28,7 +28,7 @@ class AuctionSearchTest extends TestKit(ActorSystem("AuctionHouseTest"))
         val auction = TestProbe()
         auction.send(underTest, Register(NAME))
         underTest ! Search(NAME)
-        expectMsg(1 second, SearchResult(List(auction.ref)))
+        expectMsg(1 second, SearchResult(List(auction.ref.path)))
       }
     }
     "send list without element" when {
@@ -46,7 +46,7 @@ class AuctionSearchTest extends TestKit(ActorSystem("AuctionHouseTest"))
         val auction2 = TestProbe()
         auction2.send(underTest, Register(NAME_B))
         underTest ! Search(QUERY)
-        expectMsg(1 second, SearchResult(List(auction1.ref, auction2.ref)))
+        expectMsg(1 second, SearchResult(List(auction1.ref.path, auction2.ref.path)))
       }
     }
   }

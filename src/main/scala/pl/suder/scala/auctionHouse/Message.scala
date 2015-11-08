@@ -1,6 +1,6 @@
 package pl.suder.scala.auctionHouse
 
-import akka.actor.ActorRef
+import akka.actor.ActorPath
 import scala.concurrent.duration.`package`.DurationInt
 
 object Message {
@@ -27,10 +27,15 @@ object Message {
     require(name.trim.length > 0)
   }
 
+  case class Unregister(name: String) {
+    require(name != null)
+    require(name.trim.length > 0)
+  }
+
   case class Search(name: String) {
     require(name != null)
     require(name.trim.length > 0)
   }
 
-  case class SearchResult(auctions: List[ActorRef])
+  case class SearchResult(auctions: List[ActorPath])
 }

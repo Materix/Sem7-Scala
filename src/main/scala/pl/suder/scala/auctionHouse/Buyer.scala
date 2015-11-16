@@ -26,5 +26,6 @@ class Buyer(val auctionsName: List[String], val maxPrize: Int) extends Actor {
   }
 
   override def receive = buying(0, List())
+  Thread sleep 2000
   auctionsName.foreach { name => context.actorSelection("/user/AuctionSearch") ! Search(name) }
 }

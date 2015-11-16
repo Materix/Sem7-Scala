@@ -1,0 +1,30 @@
+LevelDB:native = OFF
+Write: 10817 milliseconds
+Read: 72 milliseconds
+Write: 10812 milliseconds
+Read: 74 milliseconds
+Write: 11736 milliseconds
+Read: 81 milliseconds
+Write: 11274 milliseconds
+Read: 75 milliseconds
+
+LevelDB:native = ON
+Write: 600 milliseconds
+Read: 78 milliseconds
+Write: 713 milliseconds
+Read: 88 milliseconds
+Write: 850 milliseconds
+Read: 80 milliseconds
+Write: 813 milliseconds
+Read: 82 milliseconds
+
+
+MongoDB
+Write: 36259 milliseconds
+Read: 244 milliseconds
+Write: 35134 milliseconds
+Read: 134 milliseconds
+Write: 39435 milliseconds
+Read: 193 milliseconds
+Write: 34332 milliseconds
+Read: 141 milliseconds

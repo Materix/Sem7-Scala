@@ -50,8 +50,6 @@ class Auction(val name: String) extends PersistentActor {
   def updateEndTimer(time: FiniteDuration) = {
     if (time - currentTime > Duration(0, MILLISECONDS)) {
       system.scheduler.scheduleOnce(time - currentTime, self, EndAuction)
-    } else { // TODO think about it
-      self ! EndAuction
     }
   }
 
@@ -65,7 +63,7 @@ class Auction(val name: String) extends PersistentActor {
   override def receiveRecover: Receive = LoggingReceive {
     case BidEvent(bid, winner) => updateBid(bid, winner)
     case ChangeState(newState) => updateState(newState)
-    case RecoveryCompleted     => println("Recovery completed")
+    case RecoveryCompleted     => // register, start timer if needed
     case EndTime(time)         => updateEndTimer(time)
     case DeleteTime(time)      => updateDeleteTimer(time)
   }
@@ -90,7 +88,7 @@ class Auction(val name: String) extends PersistentActor {
     case Relist =>
       startEndTimer(BidTimer)
       persist(ChangeState(Auction.Created)) {
-        evn => updateState(Auction.Created)
+        evn => updateState(Auction.Created) // FIXME start timer
       }
     case DeleteAuction =>
       context.parent ! AuctionDeleted
@@ -102,7 +100,7 @@ class Auction(val name: String) extends PersistentActor {
 
   def Activated(prize: Int, buyer: ActorPath): Receive = LoggingReceive {
     case Bid(bid) if bid > prize =>
-      context.actorSelection(buyer) ! Beaten(bid)
+      context.actorSelection(buyer) ! Beaten(bid) // TODO add self bid protection
       persist(BidEvent(bid, sender.path)) {
         evn => updateBid(bid, sender.path)
       }

@@ -88,23 +88,21 @@ class Auction(val name: String) extends PersistentActor {
     case Relist =>
       startEndTimer(BidTimer)
       persist(ChangeState(Auction.Created)) {
-        evn => updateState(Auction.Created) // FIXME start timer
+        evn => updateState(Auction.Created)
       }
     case DeleteAuction =>
       context.parent ! AuctionDeleted
       persist(ChangeState(Auction.Deleted)) {
         evn => updateState(Auction.Deleted)
       }
-    //      context stop self
   }
 
   def Activated(prize: Int, buyer: ActorPath): Receive = LoggingReceive {
     case Bid(bid) if bid > prize =>
-      context.actorSelection(buyer) ! Beaten(bid) // TODO add self bid protection
+      context.actorSelection(buyer) ! Beaten(bid)
       persist(BidEvent(bid, sender.path)) {
         evn => updateBid(bid, sender.path)
       }
-    //      context become Activated(bid, sender)
     case Bid(_) if sender.path != buyer => sender ! NotEnough(prize) // self-beat protection
     case Bid(_)                         => println("Self-beat protection")
     case EndAuction =>
@@ -114,7 +112,6 @@ class Auction(val name: String) extends PersistentActor {
       persist(ChangeState(Auction.Sold)) {
         evn => updateState(Auction.Sold)
       }
-    //      context become Sold
   }
 
   def Sold: Receive = LoggingReceive {

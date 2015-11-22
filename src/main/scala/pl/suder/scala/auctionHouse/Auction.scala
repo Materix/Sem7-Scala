@@ -31,6 +31,8 @@ object Auction {
 }
 
 class Auction(val name: String) extends PersistentActor {
+  override val recovery = Recovery.none;
+
   import context._
   import Auction._
 
@@ -73,6 +75,7 @@ class Auction(val name: String) extends PersistentActor {
 
   def Created: Receive = LoggingReceive {
     case Bid(bid) =>
+      notify(sender.path, bid)
       persist(BidEvent(bid, sender.path)) {
         evn => updateBid(bid, sender.path)
       }
@@ -81,7 +84,6 @@ class Auction(val name: String) extends PersistentActor {
       persist(ChangeState(Auction.Ignored)) {
         evn => updateState(Auction.Ignored)
       }
-    //      context become Ignored
   }
 
   def Ignored: Receive = LoggingReceive {
@@ -100,6 +102,7 @@ class Auction(val name: String) extends PersistentActor {
   def Activated(prize: Int, buyer: ActorPath): Receive = LoggingReceive {
     case Bid(bid) if bid > prize =>
       context.actorSelection(buyer) ! Beaten(bid)
+      notify(sender.path, bid)
       persist(BidEvent(bid, sender.path)) {
         evn => updateBid(bid, sender.path)
       }
@@ -134,6 +137,10 @@ class Auction(val name: String) extends PersistentActor {
     persist(DeleteTime(currentTime + time)) {
       evn => updateDeleteTimer(evn.time)
     }
+  }
+
+  def notify(winner: ActorPath, price: Int) {
+    context.actorSelection("/user/Notifier") ! Notify(name, winner, price)
   }
 
   override def receiveCommand = Created

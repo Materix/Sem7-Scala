@@ -8,6 +8,7 @@ resolvers += "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repos
 
 libraryDependencies ++= Seq(
   "com.typesafe.akka" %% "akka-actor" % "2.4.0" withSources() withJavadoc(),
+  "com.typesafe.akka" %% "akka-remote" % "2.4.0",
   "com.typesafe.akka" %% "akka-testkit" % "2.4.0" % "test" withSources() withJavadoc(),
   "org.scalatest" %% "scalatest" % "2.2.4" % "test" withSources() withJavadoc(),
   "com.typesafe.akka" %% "akka-persistence" % "2.4.0" withSources() withJavadoc(),
@@ -18,4 +19,5 @@ libraryDependencies ++= Seq(
   "com.geteventstore" %% "akka-persistence-eventstore" % "2.1.0",
   "org.iq80.leveldb"            % "leveldb"          % "0.7" withSources() withJavadoc(),
   "org.fusesource.leveldbjni"   % "leveldbjni-all"   % "1.8" withSources() withJavadoc()
+
 )

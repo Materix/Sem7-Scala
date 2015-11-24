@@ -20,6 +20,7 @@ object AuctionHouse extends App {
   auctionHouseSystem.actorOf(Props[Notifier], "Notifier")
 
   auctionHouseSystem.actorOf(Props(classOf[Seller], List("a a", "b", "c")), "seler")
+
   0 to 1 foreach { i => auctionHouseSystem.actorOf(Props(classOf[Buyer], List("a", "a", "b", "c"), 15), "buyer" + i) }
 
   Await.result(auctionPublisherSystem.whenTerminated, Duration.Inf)

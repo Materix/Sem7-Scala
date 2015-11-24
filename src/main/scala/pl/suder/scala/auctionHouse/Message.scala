@@ -40,4 +40,6 @@ object Message {
   case class SearchResult(auctions: List[ActorPath])
 
   case class Notify(title: String, winner: ActorPath, price: Int)
+
+  case object Ack
 }

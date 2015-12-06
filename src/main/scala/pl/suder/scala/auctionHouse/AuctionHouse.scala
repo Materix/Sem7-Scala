@@ -11,12 +11,14 @@ import pl.suder.scala.auctionHouse._
 import pl.suder.scala.publisher._
 
 object AuctionHouse extends App {
+  val searchWorkers = 10
+
   val config = ConfigFactory.load()
   val auctionPublisherSystem = ActorSystem("AuctionPublisher", config.getConfig("AuctionPublisher").withFallback(config))
   val auctionPublisher = auctionPublisherSystem.actorOf(Props[AuctionPublisher], "AuctionPublisher")
 
   val auctionHouseSystem = ActorSystem("AuctionHouse", config.getConfig("AuctionHouse").withFallback(config))
-  auctionHouseSystem.actorOf(Props[AuctionSearch], "AuctionSearch")
+  auctionHouseSystem.actorOf(Props(classOf[MasterSearch], searchWorkers), "MasterSearch")
   auctionHouseSystem.actorOf(Props[Notifier], "Notifier")
 
   auctionHouseSystem.actorOf(Props(classOf[Seller], List("a a", "b", "c")), "seler")

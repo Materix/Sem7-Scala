@@ -19,4 +19,5 @@ class Seller(val auctionName: List[String]) extends Actor {
 
   auctionName foreach { name => context.actorOf(Props(classOf[Auction], name), name.replace(" ", "_")) }
   override def receive = receive(0)
+  context.parent ! Ack
 }

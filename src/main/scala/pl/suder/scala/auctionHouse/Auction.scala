@@ -45,7 +45,7 @@ class Auction(val name: String) extends PersistentActor {
       case Auction.Created => context become Created
       case Auction.Ignored => context become Ignored
       case Auction.Sold    => context become Sold
-      case Auction.Deleted => context.actorSelection("/user/AuctionSearch") ! Unregister(name); context stop self
+      case Auction.Deleted => context.actorSelection("/user/MasterSearch") ! Unregister(name); context stop self
     }
   }
 
@@ -145,6 +145,7 @@ class Auction(val name: String) extends PersistentActor {
 
   override def receiveCommand = Created
 
-  context.actorSelection("/user/AuctionSearch") ! Register(name);
+  context.actorSelection("/user/MasterSearch") ! Register(name);
   startEndTimer(BidTimer) // it cause extra unhandled message
+  context.parent ! Ack
 }

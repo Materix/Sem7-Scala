@@ -1,0 +1,96 @@
+Roundrobin
+
+1:
+
+3196 milliseconds
+4451 milliseconds
+3433 milliseconds
+4664 milliseconds
+4760 milliseconds
+
+2:
+
+2000 milliseconds
+2235 milliseconds
+2816 milliseconds
+2938 milliseconds
+2253 milliseconds
+
+3:
+
+1943 milliseconds
+2145 milliseconds
+2120 milliseconds
+1719 milliseconds
+1904 milliseconds
+
+4:
+
+2089 milliseconds
+2230 milliseconds
+2078 milliseconds
+2570 milliseconds
+2100 milliseconds
+
+5:
+
+2374 milliseconds
+2683 milliseconds
+1858 milliseconds
+2349 milliseconds
+1979 milliseconds
+
+8:
+1824
+1136
+1420
+1391
+1464
+
+Smallest
+
+1:
+
+3407 milliseconds
+3676 milliseconds
+3248 milliseconds
+3707 milliseconds
+3517 milliseconds
+
+2:
+
+2313 milliseconds
+2317 milliseconds
+2376 milliseconds
+2131 milliseconds
+2691 milliseconds
+
+3:
+
+2267 milliseconds
+2104 milliseconds
+2563 milliseconds
+1912 milliseconds
+1994 milliseconds
+
+4:
+
+2258 milliseconds
+2099 milliseconds
+1951 milliseconds
+1883 milliseconds
+2134 milliseconds
+
+5:
+2064 milliseconds
+2153 milliseconds
+2026 milliseconds
+1808 milliseconds
+1882 milliseconds
+
+8:
+1195
+1578
+1342
+1109
+1127

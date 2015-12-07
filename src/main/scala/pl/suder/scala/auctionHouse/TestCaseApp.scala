@@ -28,8 +28,8 @@ import pl.suder.scala.auctionHouse.Message._
 // porównać wyniki dla RoundRobinRoutingLogic oraz SmallestMailboxRoutingLogic
 
 object TestCase {
-  val searchWorkers = 10
-  val auctions = 5000
+  val searchWorkers = 16
+  val auctions = 10000
   val searchs = 2000
 
   def currentTime: FiniteDuration = Duration(Calendar.getInstance.getTimeInMillis, MILLISECONDS)
@@ -37,17 +37,24 @@ object TestCase {
   case object Ok
 }
 
+class TestCaseAuction(val name: String) extends Actor {
+  override def receive = {
+    case x =>
+  }
+  context.actorSelection("/user/MasterSearch") ! Register(name);
+  context.parent ! Ack
+}
+
 class TestCaseBuyer extends Actor {
   var time: FiniteDuration = 0 millisecond;
 
   var receiveMsg = 0;
 
-  def receive = LoggingReceive {
-    case x: SearchResult if receiveMsg == TestCase.searchs => println(TestCase.currentTime - time)
+  override def receive = {
+    case x: SearchResult if receiveMsg == TestCase.searchs => println(TestCase.currentTime - time); context.system.terminate();
     case x: SearchResult                                   => receiveMsg += 1
   }
 
-  println("Start searching")
   time = TestCase.currentTime
   0 to TestCase.searchs foreach { name => context.actorSelection("/user/MasterSearch") ! Search(name.toString()) }
 }
@@ -55,16 +62,16 @@ class TestCaseBuyer extends Actor {
 class TestCaseSeller extends Actor {
   var receiveMsg = 0;
 
-  def receive = LoggingReceive {
+  override def receive = {
     case Ack if receiveMsg == TestCase.auctions => context.parent ! TestCase.Ok
     case Ack                                    => receiveMsg += 1
   }
 
-  0 to TestCase.auctions foreach { name => context.actorOf(Props(classOf[Auction], name.toString())) }
+  0 to TestCase.auctions foreach { name => context.actorOf(Props(classOf[TestCaseAuction], name.toString())) }
 }
 
 class TestCaseActor extends Actor {
-  def receive = LoggingReceive {
+  override def receive = {
     case TestCase.Ok => context.actorOf(Props[TestCaseBuyer], "buyer")
   }
 
@@ -72,7 +79,6 @@ class TestCaseActor extends Actor {
 }
 
 object TestCaseApp extends App {
-
   val config = ConfigFactory.load()
   val auctionPublisherSystem = ActorSystem("AuctionPublisher", config.getConfig("AuctionPublisher").withFallback(config))
   val auctionPublisher = auctionPublisherSystem.actorOf(Props[AuctionPublisher], "AuctionPublisher")
@@ -83,6 +89,6 @@ object TestCaseApp extends App {
 
   auctionHouseSystem.actorOf(Props[TestCaseActor], "testCaseActor")
 
-  Await.result(auctionPublisherSystem.whenTerminated, Duration.Inf)
   Await.result(auctionHouseSystem.whenTerminated, Duration.Inf)
+  auctionPublisherSystem.terminate()
 }

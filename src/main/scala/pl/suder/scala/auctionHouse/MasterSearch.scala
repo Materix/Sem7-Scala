@@ -19,9 +19,10 @@ class MasterSearch(val workersNumber: Int) extends Actor {
 
   val registerRouter = Router(BroadcastRoutingLogic(), workers)
 
+  //  val searchRouter = Router(SmallestMailboxRoutingLogic(), workers)
   val searchRouter = Router(RoundRobinRoutingLogic(), workers)
 
-  def receive = LoggingReceive {
+  override def receive = {
     case x: Register   => registerRouter.route(x, sender)
     case x: Unregister => registerRouter.route(x, sender)
     case x: Search     => searchRouter.route(x, sender)
